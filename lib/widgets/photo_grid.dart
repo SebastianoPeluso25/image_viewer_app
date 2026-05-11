@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/photo_provider.dart';
+import '../screens/photo_viewer_screen.dart';
 import 'photo_card.dart';
 
 class PhotoGrid extends StatelessWidget {
@@ -38,7 +39,21 @@ class PhotoGrid extends StatelessWidget {
           itemCount: provider.photos.length,
           itemBuilder: (context, index) {
             final photo = provider.photos[index];
-            return PhotoCard(photoId: photo.id, name: photo.name);
+            return PhotoCard(
+              photoId: photo.id,
+              name: photo.name,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PhotoViewerScreen(
+                      photos: provider.photos,
+                      initialIndex: index,
+                    ),
+                  ),
+                );
+              },
+            );
           },
         );
       },
