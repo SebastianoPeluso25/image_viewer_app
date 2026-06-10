@@ -32,7 +32,11 @@ class RightSidebar extends StatelessWidget {
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return ListTile(
-                leading: Icon(themeProvider.themeMode == ThemeMode.light ? Icons.light_mode : Icons.dark_mode),
+                leading: Icon(
+                  themeProvider.themeMode == ThemeMode.light
+                      ? Icons.light_mode
+                      : Icons.dark_mode,
+                ),
                 title: const Text("Tema Scuro"),
                 trailing: Switch(
                   value: themeProvider.themeMode == ThemeMode.dark,
@@ -48,7 +52,10 @@ class RightSidebar extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 24),
-          const Text("Dimensione Griglia", style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            "Dimensione Griglia",
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           Consumer<PhotoProvider>(
             builder: (context, provider, child) {
               return Slider(
@@ -60,13 +67,21 @@ class RightSidebar extends StatelessWidget {
             },
           ),
           const Divider(height: 40),
-          const Text("Ordina per", style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            "Ordina per",
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 12),
           Consumer<PhotoProvider>(
             builder: (context, provider, child) {
               return Column(
                 children: [
-                  _sortOption(context, provider, "Data di creazione", "created_at"),
+                  _sortOption(
+                    context,
+                    provider,
+                    "Data di creazione",
+                    "created_at",
+                  ),
                   _sortOption(context, provider, "Nome", "name"),
                   _sortOption(context, provider, "Dimensione", "size"),
                 ],
@@ -105,7 +120,9 @@ class RightSidebar extends StatelessWidget {
             label: const Text("Carica Cartella"),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size.fromHeight(50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],
@@ -113,7 +130,12 @@ class RightSidebar extends StatelessWidget {
     );
   }
 
-  Widget _sortOption(BuildContext context, PhotoProvider provider, String label, String value) {
+  Widget _sortOption(
+    BuildContext context,
+    PhotoProvider provider,
+    String label,
+    String value,
+  ) {
     return RadioListTile<String>(
       title: Text(label, style: const TextStyle(fontSize: 14)),
       value: value,
@@ -139,7 +161,7 @@ class RightSidebar extends StatelessWidget {
     */
     // For now, let's just trigger a dialog to enter a path or use a mock path if needed
     // But I'll leave the logic for file_picker.
-    
+
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -150,7 +172,10 @@ class RightSidebar extends StatelessWidget {
           decoration: const InputDecoration(hintText: "C:\\Users\\..."),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Annulla")),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Annulla"),
+          ),
           TextButton(
             onPressed: () {
               provider.scanFolder(controller.text);

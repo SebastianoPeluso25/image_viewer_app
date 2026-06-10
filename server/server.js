@@ -21,7 +21,7 @@ app.post('/api/scan', async (req, res) => {
     try {
         const files = await fs.readdir(folderPath);
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
-        
+
         const photosFound = [];
 
         for (const file of files) {
@@ -29,7 +29,7 @@ app.post('/api/scan', async (req, res) => {
             if (imageExtensions.includes(ext)) {
                 const fullPath = path.join(folderPath, file);
                 const stats = await fs.stat(fullPath);
-                
+
                 insertPhoto.run(file, fullPath, stats.size, `image/${ext.replace('.', '')}`);
                 photosFound.push({ name: file, path: fullPath });
             }

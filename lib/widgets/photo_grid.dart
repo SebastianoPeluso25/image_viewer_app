@@ -22,7 +22,10 @@ class PhotoGrid extends StatelessWidget {
               children: [
                 Icon(Icons.photo_library, size: 80, color: Colors.grey),
                 SizedBox(height: 16),
-                Text("Nessuna foto trovata. Carica una cartella!", style: TextStyle(fontSize: 18, color: Colors.grey)),
+                Text(
+                  "Nessuna foto trovata. Carica una cartella!",
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
               ],
             ),
           );
