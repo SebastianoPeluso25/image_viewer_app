@@ -1,11 +1,11 @@
 {
-    "name": "viewer_file_image",
-    "short_name": "viewer_file_image",
+    "name": "Pixora",
+    "short_name": "Pixora",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Pixora - visualizzatore e editor di immagini.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -1,3 +1,3 @@
-# viewer_file_image
+# Pixora
 
 A new Flutter project.

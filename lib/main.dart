@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     return Consumer<SettingsProvider>(
       builder: (context, settings, child) {
         return MaterialApp(
-          title: 'Photo Viewer Premium',
+          title: 'Pixora',
           debugShowCheckedModeBanner: false,
           themeMode: settings.themeMode,
           theme: _buildTheme(Brightness.light),

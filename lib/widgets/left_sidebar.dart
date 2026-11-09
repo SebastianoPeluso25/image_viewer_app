@@ -13,8 +13,8 @@ class LeftSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
+    // La larghezza è decisa da ResizableSidebar (regolabile dall'utente)
     return Container(
-      width: 280,
       decoration: BoxDecoration(
         color: scheme.surfaceContainerLowest,
         border: Border(

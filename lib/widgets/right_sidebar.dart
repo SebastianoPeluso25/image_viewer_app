@@ -11,8 +11,8 @@ class RightSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
+    // La larghezza è decisa da ResizableSidebar (regolabile dall'utente)
     return Container(
-      width: 300,
       decoration: BoxDecoration(
         color: scheme.surfaceContainerLowest,
         border: Border(
@@ -28,9 +28,13 @@ class RightSidebar extends StatelessWidget {
               children: [
                 Icon(Icons.tune, color: scheme.primary),
                 const SizedBox(width: 10),
-                const Text(
-                  "Impostazioni",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                const Flexible(
+                  child: Text(
+                    "Impostazioni",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  ),
                 ),
               ],
             ),

@@ -4,6 +4,7 @@ import '../providers/photo_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/left_sidebar.dart';
 import '../widgets/photo_grid.dart';
+import '../widgets/resizable_sidebar.dart';
 import '../widgets/right_sidebar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,27 +26,35 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final settings = context.watch<SettingsProvider>();
 
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 20,
+        titleSpacing: 12,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: scheme.primaryContainer,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.photo_camera_back_outlined,
-                color: scheme.primary,
-                size: 22,
+            IconButton(
+              tooltip: settings.leftSidebarVisible
+                  ? "Nascondi cartelle"
+                  : "Mostra cartelle",
+              isSelected: settings.leftSidebarVisible,
+              icon: const Icon(Icons.menu),
+              selectedIcon: const Icon(Icons.menu_open),
+              onPressed: settings.toggleLeftSidebar,
+            ),
+            const SizedBox(width: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/images/pixora_logo.png',
+                width: 38,
+                height: 38,
+                filterQuality: FilterQuality.medium,
               ),
             ),
             const SizedBox(width: 12),
             const Text(
-              "Photo Viewer",
+              "Pixora",
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
           ],
@@ -58,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          if (context.watch<SettingsProvider>().showSearchBar)
+          if (settings.showSearchBar)
             Container(
               width: 320,
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -82,13 +91,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 12),
+          IconButton(
+            tooltip: settings.rightSidebarVisible
+                ? "Nascondi impostazioni"
+                : "Mostra impostazioni",
+            isSelected: settings.rightSidebarVisible,
+            icon: const Icon(Icons.tune),
+            selectedIcon: const Icon(Icons.tune),
+            style: IconButton.styleFrom(
+              backgroundColor: settings.rightSidebarVisible
+                  ? scheme.primaryContainer
+                  : null,
+              foregroundColor:
+                  settings.rightSidebarVisible ? scheme.primary : null,
+            ),
+            onPressed: settings.toggleRightSidebar,
+          ),
+          const SizedBox(width: 16),
         ],
       ),
-      body: const Row(
+      body: Row(
         children: [
-          LeftSidebar(),
-          Expanded(
+          ResizableSidebar(
+            side: SidebarSide.left,
+            visible: settings.leftSidebarVisible,
+            width: settings.leftSidebarWidth,
+            defaultWidth: SettingsProvider.leftDefaultWidth,
+            onWidthChanged: settings.setLeftSidebarWidth,
+            onResizeEnd: settings.saveSidebarWidths,
+            child: const LeftSidebar(),
+          ),
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -97,7 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          RightSidebar(),
+          ResizableSidebar(
+            side: SidebarSide.right,
+            visible: settings.rightSidebarVisible,
+            width: settings.rightSidebarWidth,
+            defaultWidth: SettingsProvider.rightDefaultWidth,
+            onWidthChanged: settings.setRightSidebarWidth,
+            onResizeEnd: settings.saveSidebarWidths,
+            child: const RightSidebar(),
+          ),
         ],
       ),
     );
