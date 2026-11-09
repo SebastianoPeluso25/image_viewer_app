@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../models/photo.dart';
+import '../providers/photo_provider.dart';
 import '../services/api_service.dart';
+import '../widgets/photo_info_dialog.dart';
+import 'photo_editor_screen.dart';
 
 class PhotoViewerScreen extends StatefulWidget {
   final List<Photo> photos;
@@ -55,6 +59,39 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
     }
   }
 
+  Future<void> _showInfo() async {
+    await PhotoInfoDialog.show(context, widget.photos[_currentIndex]);
+    _focusNode.requestFocus(); // per far funzionare di nuovo le frecce
+  }
+
+  Future<void> _openEditor() async {
+    final photo = widget.photos[_currentIndex];
+    final result = await Navigator.push<PhotoEditResult>(
+      context,
+      MaterialPageRoute(builder: (_) => PhotoEditorScreen(photo: photo)),
+    );
+    if (!mounted) return;
+    _focusNode.requestFocus();
+    if (result == null) return;
+
+    final provider = context.read<PhotoProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    if (result.overwritten) {
+      // Nuovo URL per la foto: forza il ricaricamento al posto della versione in cache
+      ApiService.bumpPhotoVersion(photo.id);
+      setState(() {});
+      provider.fetchPhotos();
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Immagine aggiornata")),
+      );
+    } else {
+      provider.reloadAfterEdit();
+      messenger.showSnackBar(
+        SnackBar(content: Text("Copia salvata: ${result.photo.name}")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +107,10 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
               _prevPage();
             } else if (event.logicalKey == LogicalKeyboardKey.escape) {
               Navigator.pop(context);
+            } else if (event.logicalKey == LogicalKeyboardKey.keyI) {
+              _showInfo();
+            } else if (event.logicalKey == LogicalKeyboardKey.keyE) {
+              _openEditor();
             }
           }
         },
@@ -117,7 +158,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                    colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
                   ),
                 ),
                 child: Row(
@@ -147,6 +188,17 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                           ),
                         ],
                       ),
+                    ),
+                    _TopAction(
+                      icon: Icons.info_outline,
+                      tooltip: "Dettagli (I)",
+                      onPressed: _showInfo,
+                    ),
+                    const SizedBox(width: 8),
+                    _TopAction(
+                      icon: Icons.crop_rotate,
+                      tooltip: "Modifica: ritaglia e ruota (E)",
+                      onPressed: _openEditor,
                     ),
                   ],
                 ),
@@ -180,6 +232,33 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Pulsante circolare semitrasparente per la barra superiore del visualizzatore.
+class _TopAction extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  const _TopAction({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      icon: Icon(icon, color: Colors.white),
+      style: IconButton.styleFrom(
+        backgroundColor: Colors.white.withValues(alpha: 0.15),
+        hoverColor: Colors.white.withValues(alpha: 0.25),
+        padding: const EdgeInsets.all(12),
       ),
     );
   }
